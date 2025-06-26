@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Results</title>
+    <link rel="stylesheet" href="{% static 'css/searched.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h2>Search Results for "{{query}}"</h2>
+        <a href="{% url 'home' %}">← Back to Home</a>
+        <ul class="user-list">
+            {% for user in results %}
+                <li class="user-card">
+                    <img src="{% if user.profile_image %}{{ user.profile_image.url }}{% else %}{% static 'default-user.png' %}{% endif %}" class="avatar">
+                    <div>
+                        <strong>{{ user.full_name }}</strong><br>
+                        {{ user.phone }}
+                    </div>
+                </li>
+                 <a href="{% url 'send_request' user.id %}" class="btn">Send Request</a>
+            {% empty %}
+                <li>No users found.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

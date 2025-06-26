@@ -1,0 +1,172 @@
+/* static/css/style.css */
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(to right, #f0f2f5, #d9e2ec);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background: #fff;
+    padding: 40px 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #333;
+}
+.p{
+   color: #333;
+   margin-top: 16px;
+}
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+input {
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: border-color 0.2s ease;
+}
+
+input:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+button {
+    padding: 12px;
+    background-color: #c90f7b;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.messages {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+.delete-btn { 
+    background: #e74c3c !important;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 13px;
+    margin-top:10px;
+}
+
+.delete-btn:hover {
+    background: #c0392b;
+}
+
+
+
+
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: #f0f2f5;
+}
+
+.page-container {
+    max-width: 600px;
+    margin: auto;
+    padding: 15px;
+}
+
+.post-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.05);
+}
+
+.post-box textarea {
+    width: 100%;
+    resize: vertical;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+}
+
+.post-box input[type="file"] {
+    margin: 5px 0;
+}
+
+.post-box button {
+    background: #05172e;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    font-size: 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.feed .post {
+    background: #fff;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.05);
+}
+
+.post img.media,
+.post video.media {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.post .timestamp {
+    color: gray;
+    font-size: 12px;
+}
+
+@media (max-width: 768px) {
+    .page-container {
+        padding: 10px;
+    }
+
+    .post-box, .feed .post {
+        padding: 12px;
+    }
+
+    .post-box button {
+        font-size: 14px;
+    }
+
+}
+
+

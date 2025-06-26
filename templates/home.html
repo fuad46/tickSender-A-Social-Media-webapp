@@ -1,0 +1,164 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Home</title>
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home2.css' %}">
+</head>
+<body>
+  <header class="top-bar">
+    <h1>TickSender</h1>
+    <form method="GET" action="{% url 'search_users' %}" class="search-form">
+  <input type="text" name="q" placeholder="Search users..." required>
+  <button type="submit">🔍</button>
+</form>
+    <nav>
+      <a href="{% url 'home' %}">Home</a>
+      <a href="{% url 'profile' %}">Profile</a>
+      <a href="{% url 'logout' %}">Logout</a>
+    </nav>
+  </header>
+
+  <div class="page-container">
+    
+    <div class="post-box">
+      <div class="user-info">
+        <img src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}{% static 'default-user.png' %}{% endif %}" alt="Avatar" class="avatar-sm">
+        <span class="user-name">{{ request.user.full_name }}</span>
+      </div>
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <textarea name="text" placeholder="What's on your mind?" rows="3"></textarea>
+        <div class="media-inputs">
+            <!-- Hidden file inputs -->
+  <input type="file" name="image" id="imageInput" accept="image/*" style="display: none;">
+  <input type="file" name="video" id="videoInput" accept="video/*" style="display: none;">
+  <input type="file" name="audio" id="audioInput" accept="audio/*" style="display: none;">
+
+  <!-- Icon-based upload buttons -->
+  <div class="upload-icons">
+    <label for="imageInput" class="icon-upload">📷 Image</label>
+    <label for="videoInput" class="icon-upload">🎥 Video</label>
+    <label for="audioInput" class="icon-upload">🎙️ Audio</label>
+  </div>
+        </div>
+        <button type="submit" class="post-btn">Post</button>
+      </form>
+    </div>
+
+    <div class="feed">
+      {% for post in posts %}
+        <div class="post">
+          <div class="post-header">
+            <img src="{% if post.user.profile_image %}{{ post.user.profile_image.url }}{% else %}{% static 'default-user.png' %}{% endif %}" alt="Avatar" class="avatar-sm">
+            <div>
+              <strong>{{ post.user.full_name }}</strong>
+              <div class="timestamp">{{ post.pretty_time }}</div>
+            </div>
+            <form method="POST" action="{% url 'delete_post' post.id %}" class="delete-form">
+              {% csrf_token %}
+              <button type="submit" class="delete-btn">⋯</button>
+            </form>
+          </div>
+          {% if post.text %}<p class="post-text">{{ post.text }}</p>{% endif %}
+          {% if post.image %}<img src="{{ post.image.url }}" class="media visual"><br>{% endif %}
+          {% if post.video %}<video controls class="media visual"><source src="{{ post.video.url }}"></video><br>{% endif %}
+          {% if post.audio %}<audio controls class="media"></audio><br>{% endif %}
+        </div>
+        <!-- Reaction UI -->
+<div class="reactions">
+  <div class="react-box">
+    <button class="react-btn">😊 React</button>
+    <div class="react-options">
+      <form method="POST" action="{% url 'react' post.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="value" value="like">
+        <button type="submit">👍 Like</button>
+      </form>
+      <form method="POST" action="{% url 'react' post.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="value" value="dislike">
+        <button type="submit">👎 Dislike</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Comment UI -->
+<div class="comments">
+  <button onclick="toggleComments('{{post.id}}')">💬 Comment</button>
+
+  <div class="comment-box" id="comment-box-{{ post.id }}" style="display:none;">
+    <form method="POST" action="{% url 'add_comment' post.id %}">
+      {% csrf_token %}
+      <input type="text" name="text" placeholder="Write a comment..." required>
+      <button type="submit">Post</button>
+    </form>
+
+    <div class="comment-list">
+      {% for comment in post.comments.all %}
+        <div class="comment">
+          <strong>{{ comment.user.full_name }}</strong>: {{ comment.text }} <small>({{ comment.created_at|timesince }} ago)</small>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+<!-- Show Like Count -->
+<p>
+  👍 Likes: {{ post.like_count }} &nbsp;
+  👎 Dislikes: {{ post.dislike_count }}
+</p>
+
+<!-- Show Comments -->
+<div class="comment-list">
+  {% for comment in post.comments.all %}
+    <div class="comment">
+      <strong>{{ comment.user.full_name }}</strong>: {{ comment.text }}
+      <small>({{ comment.created_at|timesince }} ago)</small>
+    </div>
+  {% empty %}
+    <p>No comments yet.</p>
+  {% endfor %}
+</div>
+      {% endfor %}
+    </div>
+
+  </div>
+  <script>
+function toggleComments(postId) {
+  const box = document.getElementById(`comment-box-${postId}`);
+  box.style.display = box.style.display === 'none' ? 'block' : 'none';
+}
+</script>
+
+<style>
+.react-box {
+  position: relative;
+  display: inline-block;
+}
+.react-options {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #f1f1f1;
+  padding: 5px;
+  border-radius: 5px;
+}
+.react-box:hover .react-options {
+  display: block;
+}
+.react-btn {
+  background-color: #eee;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+</style>
+
+</body>
+</html>

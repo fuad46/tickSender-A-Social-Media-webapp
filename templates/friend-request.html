@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Friend Requests</title>
+  <link rel="stylesheet" href="{% static 'css/friend-request.css' %}">
+</head>
+<body>
+  <div class="container">
+    <h2>Friend Requests</h2>
+    {% for req in requests %}
+      <div class="request">
+        <div class="request-info">
+          <img src="{% if req.sender.profile_image %}{{ req.sender.profile_image.url }}{% else %}{% static 'default-user.png' %}{% endif %}" alt="Avatar">
+          <span style="color: rgb(23, 22, 34);">{{ req.from_user.full_name }}</span>
+        </div>
+        <div class="request-actions">
+          <form method="POST" action="{% url 'accept_request' req.id %}">
+            {% csrf_token %}
+            <button type="submit">Accept</button>
+          </form>
+          <form method="POST" action="{% url 'delete_request' req.id %}">
+            {% csrf_token %}
+            <button type="submit" class="delete">Delete</button>
+          </form>
+        </div>
+      </div>
+    {% empty %}
+      <p style="text-align:center;">No friend requests at the moment.</p>
+    {% endfor %}
+  </div>
+</body>
+</html>

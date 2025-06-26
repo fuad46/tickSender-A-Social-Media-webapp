@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Friends</title>
+  <link rel="stylesheet" href="{% static 'css/friend-request.css' %}">
+</head>
+<body>
+  <div class="container">
+    <h2>My Friends</h2>
+    {% for friend in friends %}
+      <div class="request">
+        <div class="request-info">
+          <img src="{% if friend.profile_image %}{{ friend.profile_image.url }}{% else %}{% static 'default-user.png' %}{% endif %}" alt="Avatar">
+          <span>{{ friend.full_name }}</span>
+        </div>
+      </div>
+    {% empty %}
+      <p style="text-align:center;">You have no friends yet. Start connecting!</p>
+    {% endfor %}
+  </div>
+</body>
+</html>

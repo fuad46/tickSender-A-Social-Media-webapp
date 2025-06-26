@@ -1,0 +1,85 @@
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #fafafa;
+            margin: 0;
+            padding: 0;
+        }
+        .page-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: white;
+            border-bottom: 1px solid #dbdbdb;
+            margin-bottom: 20px;
+        }
+        .top-bar nav a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #262626;
+            font-weight: bold;
+        }
+        .post-box, .feed {
+            background: #fff;
+            border: 1px solid #dbdbdb;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        textarea, input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background-color: #3897f0;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        .media {
+            width: 100%;
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+        .post {
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+        }
+        .timestamp {
+            color: #999;
+            font-size: 12px;
+        }
+        .messages p {
+            background: #dff0d8;
+            color: #3c763d;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .profile-nav {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .profile-nav a {
+            margin: 0 10px;
+            color: #3897f0;
+            text-decoration: none;
+            font-weight: bold;
+        }
