@@ -1,28 +1,638 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Home</title>
+  <title>TickSender - Home</title>
   <link rel="stylesheet" href="{% static 'css/home.css' %}">
-    <link rel="stylesheet" href="{% static 'css/home2.css' %}">
+  <link rel="stylesheet" href="{% static 'css/home2.css' %}">
+  <style>
+    :root {
+      /* Light mode colors */
+      --primary-pink: #e91e63;
+      --primary-blue: #2196f3;
+      --gradient-primary: linear-gradient(135deg, #e91e63, #2196f3);
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --bg-card: #ffffff;
+      --text-primary: #1c1e21;
+      --text-secondary: #65676b;
+      --border-color: #e4e6ea;
+      --shadow: rgba(0, 0, 0, 0.1);
+      --overlay: rgba(255, 255, 255, 0.95);
+    }
+
+    [data-theme="dark"] {
+      /* Dark mode colors */
+      --bg-primary: #18191a;
+      --bg-secondary: #242526;
+      --bg-card: #242526;
+      --text-primary: #e4e6ea;
+      --text-secondary: #b0b3b8;
+      --border-color: #3e4042;
+      --shadow: rgba(0, 0, 0, 0.3);
+      --overlay: rgba(36, 37, 38, 0.95);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+      line-height: 1.6;
+    }
+
+    /* Header Styling */
+    .top-bar {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-color);
+      padding: 12px 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 4px var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .top-bar h1 {
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin: 0;
+    }
+
+    .search-form {
+      display: flex;
+      align-items: center;
+      background: var(--bg-secondary);
+      border-radius: 50px;
+      padding: 8px 16px;
+      border: 1px solid var(--border-color);
+      min-width: 300px;
+      transition: all 0.3s ease;
+    }
+
+    .search-form:focus-within {
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+    }
+
+    .search-form input {
+      border: none;
+      outline: none;
+      background: transparent;
+      color: var(--text-primary);
+      flex: 1;
+      padding: 4px 8px;
+      font-size: 14px;
+    }
+
+    .search-form input::placeholder {
+      color: var(--text-secondary);
+    }
+
+    .search-form button {
+      border: none;
+      background: transparent;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 50%;
+      transition: background 0.3s ease;
+    }
+
+    .search-form button:hover {
+      background: var(--bg-secondary);
+    }
+
+    nav {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    nav a {
+      color: var(--text-primary);
+      text-decoration: none;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    nav a:hover {
+      background: var(--bg-secondary);
+      color: var(--primary-blue);
+    }
+
+    /* Theme Toggle Button */
+    .theme-toggle {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 18px;
+      margin-left: 10px;
+    }
+
+    .theme-toggle:hover {
+      background: var(--primary-blue);
+      color: white;
+      transform: scale(1.1);
+    }
+
+    /* Main Container */
+    .page-container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 80px 20px 20px;
+    }
+
+    /* Post Creation Box */
+    .post-box {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 12px var(--shadow);
+      border: 1px solid var(--border-color);
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .avatar-sm {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 12px;
+      object-fit: cover;
+      border: 2px solid var(--primary-pink);
+    }
+
+    .user-name {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    textarea {
+      width: 100%;
+      border: none;
+      outline: none;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      padding: 16px;
+      border-radius: 12px;
+      font-size: 16px;
+      resize: vertical;
+      min-height: 80px;
+      margin-bottom: 16px;
+      font-family: inherit;
+      border: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+    }
+
+    textarea:focus {
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+    }
+
+    textarea::placeholder {
+      color: var(--text-secondary);
+    }
+
+    .media-inputs {
+      margin-bottom: 16px;
+    }
+
+    .upload-icons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .icon-upload {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      color: var(--text-primary);
+    }
+
+    .icon-upload:hover {
+      background: var(--primary-blue);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+    }
+
+    .post-btn {
+      background: var(--gradient-primary);
+      color: white;
+      border: none;
+      padding: 12px 32px;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      float: right;
+      font-size: 14px;
+    }
+
+    .post-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(233, 30, 99, 0.4);
+    }
+
+    /* Feed Styling */
+    .feed {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .post {
+      background: var(--bg-card);
+      border-radius: 12px;
+      box-shadow: 0 2px 12px var(--shadow);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .post:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px var(--shadow);
+    }
+
+    .post-header {
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      position: relative;
+    }
+
+    .post-header strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .timestamp {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .delete-form {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 20px;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+
+    .delete-btn:hover {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+
+    .post-text {
+      padding: 16px 20px;
+      color: var(--text-primary);
+      line-height: 1.5;
+      font-size: 15px;
+    }
+
+    .media {
+      width: 100%;
+      max-height: 500px;
+      object-fit: cover;
+    }
+
+    .media.visual {
+      display: block;
+    }
+
+    /* Reactions and Comments */
+    .reactions {
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .react-box {
+      position: relative;
+      display: inline-block;
+    }
+
+    .react-btn {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+    }
+
+    .react-btn:hover {
+      background: var(--primary-pink);
+      color: white;
+      transform: scale(1.05);
+    }
+
+    .react-options {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: var(--overlay);
+      backdrop-filter: blur(10px);
+      padding: 8px;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px var(--shadow);
+      border: 1px solid var(--border-color);
+      z-index: 100;
+      margin-top: 4px;
+    }
+
+    .react-box:hover .react-options {
+      display: block;
+      animation: fadeInUp 0.3s ease;
+    }
+
+    .react-options form {
+      margin: 0;
+    }
+
+    .react-options button {
+      background: none;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--text-primary);
+      transition: background 0.3s ease;
+      width: 100%;
+      text-align: left;
+    }
+
+    .react-options button:hover {
+      background: var(--bg-secondary);
+    }
+
+    .comments {
+      padding: 12px 20px;
+    }
+
+    .comments > button {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 14px;
+      cursor: pointer;
+      padding: 8px 16px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .comments > button:hover {
+      background: var(--bg-secondary);
+      color: var(--primary-blue);
+    }
+
+    .comment-box {
+      margin-top: 12px;
+      padding: 16px;
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      animation: slideDown 0.3s ease;
+    }
+
+    .comment-box form {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .comment-box input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    .comment-box input:focus {
+      border-color: var(--primary-blue);
+    }
+
+    .comment-box button {
+      background: var(--primary-blue);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .comment-box button:hover {
+      background: var(--primary-pink);
+      transform: scale(1.05);
+    }
+
+    .comment-list {
+      padding: 0 20px 16px;
+    }
+
+    .comment {
+      padding: 8px 0;
+      font-size: 14px;
+      color: var(--text-primary);
+      border-left: 3px solid var(--primary-blue);
+      padding-left: 12px;
+      margin-bottom: 8px;
+      background: var(--bg-secondary);
+      border-radius: 0 8px 8px 0;
+      padding: 8px 12px;
+    }
+
+    .comment strong {
+      color: var(--primary-blue);
+    }
+
+    .comment small {
+      color: var(--text-secondary);
+    }
+
+    /* Like/Dislike counts */
+    .post p {
+      padding: 12px 20px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      border-top: 1px solid var(--border-color);
+      margin: 0;
+      background: var(--bg-secondary);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        max-height: 0;
+      }
+      to {
+        opacity: 1;
+        max-height: 300px;
+      }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .top-bar {
+        flex-direction: column;
+        gap: 12px;
+        padding: 16px;
+      }
+
+      .search-form {
+        min-width: auto;
+        width: 100%;
+      }
+
+      nav {
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .page-container {
+        padding: 120px 12px 20px;
+      }
+
+      .post-box,
+      .post {
+        margin-left: -4px;
+        margin-right: -4px;
+      }
+
+      .upload-icons {
+        justify-content: center;
+      }
+    }
+
+    /* Loading animation for better UX */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid var(--border-color);
+      border-radius: 50%;
+      border-top-color: var(--primary-blue);
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-secondary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary-blue);
+    }
+  </style>
 </head>
 <body>
   <header class="top-bar">
     <h1>TickSender</h1>
     <form method="GET" action="{% url 'search_users' %}" class="search-form">
-  <input type="text" name="q" placeholder="Search users..." required>
-  <button type="submit">🔍</button>
-</form>
+      <input type="text" name="q" placeholder="Search users..." required>
+      <button type="submit">🔍</button>
+    </form>
     <nav>
-      <a href="{% url 'home' %}">Home</a>
-      <a href="{% url 'profile' %}">Profile</a>
-      <a href="{% url 'logout' %}">Logout</a>
+      <a href="{% url 'home' %}">🏠 Home</a>
+      <a href="{% url 'profile' %}">👤 Profile</a>
+      <a href="{% url 'logout' %}">🚪 Logout</a>
+      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+        <span id="theme-icon">🌙</span>
+      </button>
     </nav>
   </header>
 
   <div class="page-container">
-    
     <div class="post-box">
       <div class="user-info">
         <img src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}{% static 'default-user.png' %}{% endif %}" alt="Avatar" class="avatar-sm">
@@ -30,21 +640,22 @@
       </div>
       <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        <textarea name="text" placeholder="What's on your mind?" rows="3"></textarea>
+        <textarea name="text" placeholder="What's on your mind, {{ request.user.full_name }}?" rows="3"></textarea>
         <div class="media-inputs">
-            <!-- Hidden file inputs -->
-  <input type="file" name="image" id="imageInput" accept="image/*" style="display: none;">
-  <input type="file" name="video" id="videoInput" accept="video/*" style="display: none;">
-  <input type="file" name="audio" id="audioInput" accept="audio/*" style="display: none;">
+          <!-- Hidden file inputs -->
+          <input type="file" name="image" id="imageInput" accept="image/*" style="display: none;">
+          <input type="file" name="video" id="videoInput" accept="video/*" style="display: none;">
+          <input type="file" name="audio" id="audioInput" accept="audio/*" style="display: none;">
 
-  <!-- Icon-based upload buttons -->
-  <div class="upload-icons">
-    <label for="imageInput" class="icon-upload">📷 Image</label>
-    <label for="videoInput" class="icon-upload">🎥 Video</label>
-    <label for="audioInput" class="icon-upload">🎙️ Audio</label>
-  </div>
+          <!-- Icon-based upload buttons -->
+          <div class="upload-icons">
+            <label for="imageInput" class="icon-upload">📷 Photo</label>
+            <label for="videoInput" class="icon-upload">🎥 Video</label>
+            <label for="audioInput" class="icon-upload">🎙️ Audio</label>
+          </div>
         </div>
-        <button type="submit" class="post-btn">Post</button>
+        <button type="submit" class="post-btn">Share Post</button>
+        <div style="clear: both;"></div>
       </form>
     </div>
 
@@ -62,103 +673,152 @@
               <button type="submit" class="delete-btn">⋯</button>
             </form>
           </div>
+          
           {% if post.text %}<p class="post-text">{{ post.text }}</p>{% endif %}
-          {% if post.image %}<img src="{{ post.image.url }}" class="media visual"><br>{% endif %}
-          {% if post.video %}<video controls class="media visual"><source src="{{ post.video.url }}"></video><br>{% endif %}
-          {% if post.audio %}<audio controls class="media"></audio><br>{% endif %}
+          {% if post.image %}<img src="{{ post.image.url }}" class="media visual">{% endif %}
+          {% if post.video %}<video controls class="media visual"><source src="{{ post.video.url }}"></video>{% endif %}
+          {% if post.audio %}<audio controls class="media"><source src="{{ post.audio.url }}"></audio>{% endif %}
+
+          <!-- Reactions Section -->
+          <div class="reactions">
+            <div class="react-box">
+              <button class="react-btn">😊 React</button>
+              <div class="react-options">
+                <form method="POST" action="{% url 'react' post.id %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="value" value="like">
+                  <button type="submit">👍 Like</button>
+                </form>
+                <form method="POST" action="{% url 'react' post.id %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="value" value="dislike">
+                  <button type="submit">👎 Dislike</button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- Like/Dislike Count -->
+          <p>
+            👍 {{ post.like_count }} Likes &nbsp;&nbsp;
+            👎 {{ post.dislike_count }} Dislikes &nbsp;&nbsp;
+            💬 {{ post.comments.count }} Comments
+          </p>
+
+          <!-- Comments Section -->
+          <div class="comments">
+            <button onclick="toggleComments('{{post.id}}')">💬 Add Comment</button>
+
+            <div class="comment-box" id="comment-box-{{ post.id }}" style="display:none;">
+              <form method="POST" action="{% url 'add_comment' post.id %}">
+                {% csrf_token %}
+                <input type="text" name="text" placeholder="Write a comment..." required>
+                <button type="submit">Post</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Comments List -->
+          <div class="comment-list">
+            {% for comment in post.comments.all %}
+              <div class="comment">
+                <strong>{{ comment.user.full_name }}</strong>: {{ comment.text }}
+                <small>({{ comment.created_at|timesince }} ago)</small>
+              </div>
+            {% empty %}
+              <div class="comment" style="text-align: center; color: var(--text-secondary);">
+                No comments yet. Be the first to comment!
+              </div>
+            {% endfor %}
+          </div>
         </div>
-        <!-- Reaction UI -->
-<div class="reactions">
-  <div class="react-box">
-    <button class="react-btn">😊 React</button>
-    <div class="react-options">
-      <form method="POST" action="{% url 'react' post.id %}">
-        {% csrf_token %}
-        <input type="hidden" name="value" value="like">
-        <button type="submit">👍 Like</button>
-      </form>
-      <form method="POST" action="{% url 'react' post.id %}">
-        {% csrf_token %}
-        <input type="hidden" name="value" value="dislike">
-        <button type="submit">👎 Dislike</button>
-      </form>
-    </div>
-  </div>
-</div>
-
-<!-- Comment UI -->
-<div class="comments">
-  <button onclick="toggleComments('{{post.id}}')">💬 Comment</button>
-
-  <div class="comment-box" id="comment-box-{{ post.id }}" style="display:none;">
-    <form method="POST" action="{% url 'add_comment' post.id %}">
-      {% csrf_token %}
-      <input type="text" name="text" placeholder="Write a comment..." required>
-      <button type="submit">Post</button>
-    </form>
-
-    <div class="comment-list">
-      {% for comment in post.comments.all %}
-        <div class="comment">
-          <strong>{{ comment.user.full_name }}</strong>: {{ comment.text }} <small>({{ comment.created_at|timesince }} ago)</small>
+      {% empty %}
+        <div class="post" style="text-align: center; padding: 40px;">
+          <h3 style="color: var(--text-secondary); margin-bottom: 16px;">No posts yet!</h3>
+          <p style="color: var(--text-secondary);">Start sharing your thoughts with the community.</p>
         </div>
       {% endfor %}
     </div>
   </div>
-</div>
-<!-- Show Like Count -->
-<p>
-  👍 Likes: {{ post.like_count }} &nbsp;
-  👎 Dislikes: {{ post.dislike_count }}
-</p>
 
-<!-- Show Comments -->
-<div class="comment-list">
-  {% for comment in post.comments.all %}
-    <div class="comment">
-      <strong>{{ comment.user.full_name }}</strong>: {{ comment.text }}
-      <small>({{ comment.created_at|timesince }} ago)</small>
-    </div>
-  {% empty %}
-    <p>No comments yet.</p>
-  {% endfor %}
-</div>
-      {% endfor %}
-    </div>
-
-  </div>
   <script>
-function toggleComments(postId) {
-  const box = document.getElementById(`comment-box-${postId}`);
-  box.style.display = box.style.display === 'none' ? 'block' : 'none';
-}
-</script>
+    // Toggle Comments Function
+    function toggleComments(postId) {
+      const box = document.getElementById(`comment-box-${postId}`);
+      box.style.display = box.style.display === 'none' ? 'block' : 'none';
+    }
 
-<style>
-.react-box {
-  position: relative;
-  display: inline-block;
-}
-.react-options {
-  display: none;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background: #f1f1f1;
-  padding: 5px;
-  border-radius: 5px;
-}
-.react-box:hover .react-options {
-  display: block;
-}
-.react-btn {
-  background-color: #eee;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-</style>
+    // Dark/Light Mode Toggle
+    function toggleTheme() {
+      const body = document.body;
+      const themeIcon = document.getElementById('theme-icon');
+      
+      if (body.getAttribute('data-theme') === 'dark') {
+        body.removeAttribute('data-theme');
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+      } else {
+        body.setAttribute('data-theme', 'dark');
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+      }
+    }
 
+    // Load saved theme on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedTheme = localStorage.getItem('theme');
+      const themeIcon = document.getElementById('theme-icon');
+      
+      if (savedTheme === 'dark') {
+        document.body.setAttribute('data-theme', 'dark');
+        themeIcon.textContent = '☀️';
+      }
+    });
+
+    // Enhanced file upload feedback
+    document.querySelectorAll('input[type="file"]').forEach(input => {
+      input.addEventListener('change', function() {
+        const label = this.parentNode.querySelector(`label[for="${this.id}"]`);
+        if (this.files.length > 0) {
+          label.style.background = 'var(--primary-blue)';
+          label.style.color = 'white';
+          label.innerHTML = label.innerHTML.split(' ')[0] + ' ✓ Selected';
+        }
+      });
+    });
+
+    // Add loading state to forms
+    document.querySelectorAll('form').forEach(form => {
+      form.addEventListener('submit', function() {
+        const submitBtn = this.querySelector('button[type="submit"]');
+        if (submitBtn) {
+          submitBtn.innerHTML = '<span class="loading"></span> Posting...';
+          submitBtn.disabled = true;
+        }
+      });
+    });
+
+    // Smooth scroll animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.post').forEach(post => {
+      post.style.opacity = '0';
+      post.style.transform = 'translateY(20px)';
+      post.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      observer.observe(post);
+    });
+  </script>
 </body>
 </html>
