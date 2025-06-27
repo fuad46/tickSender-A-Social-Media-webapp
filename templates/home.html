@@ -175,7 +175,7 @@
       background: var(--bg-card);
       border-radius: 12px;
       padding: 20px;
-      margin-bottom: 20px;
+      margin: 16px 0;
       box-shadow: 0 2px 12px var(--shadow);
       border: 1px solid var(--border-color);
     }
@@ -568,6 +568,7 @@
 
       .page-container {
         padding: 120px 12px 20px;
+        margin-top: 160px;
       }
 
       .post-box,
@@ -625,6 +626,7 @@
     <nav>
       <a href="{% url 'home' %}">🏠 Home</a>
       <a href="{% url 'profile' %}">👤 Profile</a>
+      <a href="{% url 'all_people' %}">👤👤 Find Friends</a>
       <a href="{% url 'logout' %}">🚪 Logout</a>
       <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
         <span id="theme-icon">🌙</span>
@@ -635,7 +637,9 @@
   <div class="page-container">
     <div class="post-box">
       <div class="user-info">
-        <img src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}{% static 'default-user.png' %}{% endif %}" alt="Avatar" class="avatar-sm">
+        <img 
+        src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}{% static 'default-user.png' %}{% endif %}" 
+        alt="Avatar" class="avatar-sm">
         <span class="user-name">{{ request.user.full_name }}</span>
       </div>
       <form method="POST" enctype="multipart/form-data">

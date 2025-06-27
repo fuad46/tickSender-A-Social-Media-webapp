@@ -26,6 +26,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
      path('', lambda request: redirect('home') if request.user.is_authenticated else redirect('login')),
     path('', include('core.urls')),            
-    
+
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

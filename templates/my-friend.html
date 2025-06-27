@@ -6,6 +6,21 @@
   <link rel="stylesheet" href="{% static 'css/my-friend.css' %}">
 </head>
 <body>
+  <header class="top-bar">
+    <h1>TickSender</h1>
+    <form method="GET" action="{% url 'search_users' %}" class="search-form">
+      <input type="text" name="q" placeholder="Search users..." required>
+      <button type="submit">🔍</button>
+    </form>
+    <nav>
+      <a href="{% url 'home' %}">🏠 Home</a>
+      <a href="{% url 'profile' %}">👤 Profile</a>
+      <a href="{% url 'logout' %}">🚪 Logout</a>
+      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+        <span id="theme-icon">🌙</span>
+      </button>
+    </nav>
+  </header>
   <div class="container">
     <h2>My Friends</h2>
     {% for friend in friends %}
@@ -19,5 +34,32 @@
       <p style="text-align:center;">You have no friends yet. Start connecting!</p>
     {% endfor %}
   </div>
+  <script>
+    function toggleTheme() {
+      const body = document.body;
+      const themeIcon = document.getElementById('theme-icon');
+      
+      if (body.getAttribute('data-theme') === 'dark') {
+        body.removeAttribute('data-theme');
+        themeIcon.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+      } else {
+        body.setAttribute('data-theme', 'dark');
+        themeIcon.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+      }
+    }
+
+    // Load saved theme on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedTheme = localStorage.getItem('theme');
+      const themeIcon = document.getElementById('theme-icon');
+      
+      if (savedTheme === 'dark') {
+        document.body.setAttribute('data-theme', 'dark');
+        themeIcon.textContent = '☀️';
+      }
+    });
+  </script>
 </body>
 </html>

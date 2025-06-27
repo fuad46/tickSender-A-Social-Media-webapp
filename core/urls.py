@@ -16,8 +16,10 @@ urlpatterns = [
     path('accept-request/<int:request_id>/', views.accept_friend_request, name='accept_request'),
     path('delete-request/<int:request_id>/', views.delete_friend_request, name='delete_request'),
 
- 
+    path('all-people/', views.all_people_view, name='all_people'),
+path('create-post/', views.create_post, name='create_post'),
     path('my-friends/', views.my_friends_view, name='my_friends'),
+path('update-bio/', views.update_bio, name='update_bio'),
 
 ]
 

@@ -1,89 +1,819 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My Profile</title>
-    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
-  
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - TickSender</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Light theme colors */
+            --bg-primary: #ffffff;
+            --bg-secondary: #fafafa;
+            --bg-tertiary: #f8f9fa;
+            --bg-card: #ffffff;
+            --bg-modal: rgba(255, 255, 255, 0.95);
+            --text-primary: #262626;
+            --text-secondary: #8e8e8e;
+            --text-muted: #c7c7c7;
+            --border-color: #dbdbdb;
+            --border-light: #efefef;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            --shadow-hover: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+            --gradient-primary: linear-gradient(135deg, #e91e63, #2196f3);
+            --accent-blue: #0095f6;
+            --accent-blue-hover: #1877f2;
+            --accent-pink: #e91e63;
+            --success-green: #00c851;
+            --error-red: #ff3547;
+            --warning-orange: #ff8800;
+        }
+
+        [data-theme="dark"] {
+            /* Dark theme colors */
+            --bg-primary: #000000;
+            --bg-secondary: #121212;
+            --bg-tertiary: #1a1a1a;
+            --bg-card: #1a1a1a;
+            --bg-modal: rgba(26, 26, 26, 0.95);
+            --text-primary: #ffffff;
+            --text-secondary: #a8a8a8;
+            --text-muted: #737373;
+            --border-color: #363636;
+            --border-light: #262626;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+            --shadow-hover: 0 3px 6px rgba(0, 0, 0, 0.7), 0 3px 6px rgba(0, 0, 0, 0.5);
+            --gradient-primary: linear-gradient(135deg, #e91e63, #2196f3);
+            --accent-blue: #0095f6;
+            --accent-blue-hover: #1877f2;
+            --accent-pink: #e91e63;
+            --success-green: #00c851;
+            --error-red: #ff3547;
+            --warning-orange: #ff8800;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        /* Top Navigation Bar */
+        .top-bar {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 975px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 14px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            background: var(--bg-tertiary);
+            color: var(--accent-blue);
+        }
+
+        .nav-links a.active {
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+
+        .theme-toggle {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 16px;
+            margin-left: 16px;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Main Container */
+        .page-container {
+            max-width: 975px;
+            margin: 0 auto;
+            padding: 100px 20px 40px;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 40px;
+        }
+
+        /* Profile Section */
+        .profile-section {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            height: fit-content;
+            position: sticky;
+            top: 120px;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .profile-avatar {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        .avatar-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .avatar-img:hover {
+            transform: scale(1.05);
+            border-color: var(--accent-blue);
+        }
+
+        .avatar-upload {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: var(--accent-blue);
+            color: white;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .avatar-upload:hover {
+            background: var(--accent-blue-hover);
+            transform: scale(1.1);
+        }
+
+        .profile-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 16px;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .bio-section {
+            margin-top: 20px;
+        }
+
+        .bio-text {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px;
+            width: 100%;
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+        }
+
+        .bio-text:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 2px rgba(0, 149, 246, 0.2);
+        }
+
+        /* Feed Section */
+        .feed-section {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .create-post {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .create-post-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .create-post-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .post-input {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 12px 16px;
+            width: 100%;
+            resize: none;
+            font-family: inherit;
+            font-size: 16px;
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+            min-height: 48px;
+        }
+
+        .post-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 2px rgba(0, 149, 246, 0.2);
+        }
+
+        .post-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .media-options {
+            display: flex;
+            gap: 16px;
+        }
+
+        .media-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+
+        .media-btn:hover {
+            background: var(--accent-blue);
+            color: white;
+            border-color: var(--accent-blue);
+        }
+
+        .post-btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .post-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .post-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Feed Posts */
+        .feed-posts {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .post {
+            background: var(--bg-card);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.2s ease;
+        }
+
+        .post:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .post-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .post-user-info {
+            flex: 1;
+        }
+
+        .post-username {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .post-timestamp {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .post-content {
+            padding: 16px 20px;
+        }
+
+        .post-text {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .post-media {
+            width: 100%;
+            max-height: 600px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-top: 12px;
+        }
+
+        .post-audio {
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        .post-actions-bar {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 12px 20px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            color: var(--accent-blue);
+        }
+
+        /* Messages */
+        .messages {
+            background: var(--success-green);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 16px;
+            }
+
+            .nav-links {
+                gap: 12px;
+            }
+
+            .nav-links a {
+                font-size: 12px;
+                padding: 6px 8px;
+            }
+
+            .page-container {
+                grid-template-columns: 1fr;
+                gap: 24px;
+                padding: 80px 16px 40px;
+            }
+
+            .profile-section {
+                position: static;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .theme-toggle {
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .post {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* File Input Styling */
+        .file-input {
+            display: none;
+        }
+
+        /* Utility Classes */
+        .btn {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            background: var(--accent-blue-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-color);
+        }
+    </style>
 </head>
 <body>
-
-<div class="top-bar">
-    <h1>TickSender</h1>
-    <nav>
-        <a href="{% url 'home' %}">Home</a>
-        <a href="{% url 'profile' %}">Profile</a>
-        <a href="{% url 'my_friends' %}">My Friends</a>
-        <a href="{% url 'friend_requests' %}">Friend Requests</a>
-        <a href="{% url 'logout' %}">Logout</a>
-    </nav>
-</div>
-
-<div class="page-container">
-
-    <div class="post-box">
-        <h2>{{ request.user.full_name }}'s Profile</h2>
-
-        {% if messages %}
-        <div class="messages">
-            {% for msg in messages %}
-                <p>{{ msg }}</p>
-            {% endfor %}
+   
+   
+    <div class="top-bar">
+        <div class="nav-container">
+            <a href="#" class="logo">TickSender</a>
+            <div class="nav-links">
+                <a href="{% url 'home' %}">Home</a>
+                <a href="{% url 'profile' %}" class="active">Profile</a>
+                <a href="{% url 'my_friends' %}">My Friends</a>
+                <a href="{% url 'friend_requests' %}">Friend Requests</a>
+                <a href="{% url 'logout' %}">Logout</a>
+                <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">
+                    🌙
+                </button>
+            </div>
         </div>
-        {% endif %}
+    </div>
 
-        <div style="text-align:center;">
-            <img src="{% if user.profile_image %}{{ user.profile_image.url }}{% else %}{% static 'default-user.png' %}{% endif %}" alt="Profile Picture" width="150" height="150" style="border-radius: 50%;">
-        </div>
 
-        <form method="POST" enctype="multipart/form-data" style="margin-top: 10px;">
-            {% csrf_token %}
-            <input type="file" name="profile_image">
-            <button type="submit">Update Image</button>
-        </form>
+    <div class="page-container">
+    
+        <div class="profile-section">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <img src="{{ user.profile_image.url }}" alt="Profile" class="avatar-img" id="profileImage">
+                    <div class="avatar-upload" onclick="document.getElementById('imageInput').click()">
+                        📷
+                    </div>
+                    <form id="imageForm" method="POST" enctype="multipart/form-data" style="display:none">
+                        {% csrf_token %}
+                        <input type="file" name="profile_image" id="imageInput" class="file-input" accept="image/*" onchange="document.getElementById('imageForm').submit()">
+                    </form>
+                </div>
+                <h2 class="profile-name">{{ user.full_name }}</h2>
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">{{ posts|length }}</div>
+                        <div class="stat-label">Posts</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">{{ friends_count }}</div>
+                        <div class="stat-label">Friends</div>
+                    </div>
+                    
+                </div>
+            </div>
 
+            <div class="bio-section">
+   
+                
         <form method="POST" style="margin-top: 10px;">
             {% csrf_token %}
-            <textarea name="bio" rows="3" placeholder="Write something about you...">{{ user.bio }}</textarea>
+            <textarea name="bio" rows="3" placeholder="Write something about yourself..." 
+                              >{{ user.bio }}</textarea>
             <button type="submit">Update Bio</button>
         </form>
-
-        <hr>
-        <h3>Create a New Post</h3>
-        <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            <textarea name="text" placeholder="What's on your mind?" rows="3"></textarea><br>
-            <input type="file" name="image" accept="image/*"><br>
-            <input type="file" name="video" accept="video/*"><br>
-            <input type="file" name="audio" accept="audio/*"><br>
-            <button type="submit">Post</button>
-        </form>
-    </div>
-
-    <div class="feed">
-        <h3>Your Posts</h3>
-        {% for post in posts %}
-        <div class="post">
-            <div class="post-header">
-                <strong>{{ post.user.full_name }}</strong><br>
-                <small class="timestamp">{{ post.pretty_time }}</small>
             </div>
-            {% if post.text %}
-                <p>{{ post.text }}</p>
-            {% endif %}
-            {% if post.image %}
-                <img src="{{ post.image.url }}" alt="Image" class="media">
-            {% endif %}
-            {% if post.video %}
-                <video controls class="media"><source src="{{ post.video.url }}"></video>
-            {% endif %}
-            {% if post.audio %}
-                <audio controls><source src="{{ post.audio.url }}"></audio>
-            {% endif %}
         </div>
-        {% endfor %}
+
+
+        <div class="feed-section">
+
+            <div class="create-post">
+                <form id="postForm" method="POST" action="{% url 'create_post' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="create-post-header">
+                        <img src="{{ user.profile_image.url }}" alt="Your avatar" class="create-post-avatar">
+                        <textarea class="post-input" name="text" placeholder="What's on your mind, {{ user.full_name }}?" id="postText" rows="1" oninput="autoResize(this)"></textarea>
+                    </div>
+                    <div class="post-actions">
+                        <div class="media-options">
+                            <label class="media-btn" for="postImage">
+                                🖼️ Photo
+                                <input type="file" name="image" id="postImage" class="file-input" accept="image/*">
+                            </label>
+                            <label class="media-btn" for="postVideo">
+                                🎥 Video
+                                <input type="file" name="video" id="postVideo" class="file-input" accept="video/*">
+                            </label>
+                            <label class="media-btn" for="postAudio">
+                                🎵 Audio
+                                <input type="file" name="audio" id="postAudio" class="file-input" accept="audio/*">
+                            </label>
+                        </div>
+                        <button class="post-btn" type="submit">Post</button>
+                    </div>
+                </form>
+            </div>
+
+
+            <div class="feed-posts">
+                <h3>Your Posts</h3>
+                {% for post in posts %}
+                <div class="post">
+                    <div class="post-header">
+                        <img src="{{ user.profile_image.url }}" alt="Profile" class="post-avatar">
+                        <div class="post-user-info">
+                            <div class="post-username">{{ user.full_name }}</div>
+                            <div class="post-timestamp">{{ post.timestamp|timesince }} ago</div>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <div class="post-text">{{ post.text }}</div>
+                        {% if post.image %}<img src="{{ post.image.url }}" class="post-media">{% endif %}
+                        {% if post.video %}<video class="post-media" controls><source src="{{ post.video.url }}"></video>{% endif %}
+                        {% if post.audio %}<audio class="post-media" controls><source src="{{ post.audio.url }}"></audio>{% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 
-</div>
-</body>
+    <script>
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.getElementById('themeToggle');
+            
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                themeToggle.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeToggle.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+ 
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const themeToggle = document.getElementById('themeToggle');
+            
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                themeToggle.textContent = '☀️';
+            } else {
+                themeToggle.textContent = '🌙';
+            }
+        }
+
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
+        }
+
+      
+        function createPost() {
+            const postText = document.getElementById('postText').value.trim();
+            if (!postText) {
+                alert('Please write something to post!');
+                return;
+            }
+            
+ 
+            console.log('Creating post:', postText);
+            
+         
+            document.getElementById('postText').value = '';
+            document.getElementById('postText').style.height = 'auto';
+            
+           
+            alert('Post created successfully!');
+        }
+
+      
+        function updateBio(bioText) {
+            console.log('Updating bio:', bioText);
+           
+        }
+
+        function setupFilePreview(inputId, previewContainer) {
+            const input = document.getElementById(inputId);
+            input.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                       
+                        const preview = document.createElement('div');
+                        preview.style.marginTop = '12px';
+                        preview.style.padding = '8px';
+                        preview.style.background = 'var(--bg-tertiary)';
+                        preview.style.borderRadius = '8px';
+                        preview.style.fontSize = '12px';
+                        preview.style.color = 'var(--text-secondary)';
+                        preview.textContent = `Selected: ${file.name}`;
+                        
+                      
+                        const existingPreview = input.parentNode.querySelector('.file-preview');
+                        if (existingPreview) {
+                            existingPreview.remove();
+                        }
+                        
+                        preview.className = 'file-preview';
+                        input.parentNode.appendChild(preview);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        
+        function initializeFileUploads() {
+            setupFilePreview('postImage');
+            setupFilePreview('postVideo');
+            setupFilePreview('postAudio');
+            setupFilePreview('imageInput');
+        }
+
+     
+        function smoothScroll(target) {
+            document.querySelector(target).scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+
+       
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTheme();
+            initializeFileUploads();
+            
+            
+            const posts = document.querySelectorAll('.post');
+            posts.forEach((post, index) => {
+                post.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+
+    
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.action-btn') && e.target.closest('.action-btn').textContent.includes('❤️')) {
+                const btn = e.target.closest('.action-btn');
+                const countSpan = btn.querySelector('span');
+                let count = parseInt(countSpan.textContent);
+                
+              
+                if (btn.classList.contains('liked')) {
+                    btn.classList.remove('liked');
+                    btn.style.color = 'var(--text-secondary)';
+                    countSpan.textContent = count - 1;
+                } else {
+                    btn.classList.add('liked');
+                    btn.style.color = 'var(--error-red)';
+                    countSpan.textContent = count + 1;
+                }
+            }
+        });
+    </script>
+
 </html>

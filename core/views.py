@@ -200,6 +200,17 @@ def add_comment(request, post_id):
     return redirect('home')
 
 
+# @login_required
+# def search_users(request):
+#     query = request.GET.get('q')
+#     results = []
+#     if query:
+#         results = UserProfile.objects.filter(
+#             Q(full_name__icontains=query) | Q(phone__icontains=query)
+#         ).exclude(id=request.user.id)
+
+#     return render(request, 'searched.html', {'results': results, 'query': query})
+
 @login_required
 def search_users(request):
     query = request.GET.get('q')
@@ -209,8 +220,16 @@ def search_users(request):
             Q(full_name__icontains=query) | Q(phone__icontains=query)
         ).exclude(id=request.user.id)
 
-    return render(request, 'searched.html', {'results': results, 'query': query})
+    # Get sent request and friend IDs to control button visibility
+    sent_requests_ids = FriendRequest.objects.filter(from_user=request.user).values_list('to_user_id', flat=True)
+    friends_ids = MyFriend.objects.filter(user=request.user).values_list('friend_id', flat=True)
 
+    return render(request, 'searched.html', {
+        'results': results,
+        'query': query,
+        'sent_requests_ids': list(sent_requests_ids),
+        'friends_ids': list(friends_ids)
+    })
 
 
 
@@ -255,3 +274,94 @@ def my_friends_view(request):
     friends = [f.friend for f in friend_objs]  # get actual UserProfile instances
     return render(request, 'my-friend.html', {'friends': friends})
 
+from django.core.paginator import Paginator
+from .models import FriendRequest, MyFriend, UserProfile
+
+@login_required
+def all_people_view(request):
+    user = request.user
+    all_users = UserProfile.objects.exclude(id=user.id)
+    paginator = Paginator(all_users, 40)  # 40 users per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # Get friends & sent requests to avoid showing "Send Request" unnecessarily
+    friends_ids = MyFriend.objects.filter(user=user).values_list('friend_id', flat=True)
+    sent_requests_ids = FriendRequest.objects.filter(from_user=user).values_list('to_user_id', flat=True)
+
+    return render(request, 'allpeople.html', {
+        'page_obj': page_obj,
+        'friends_ids': list(friends_ids),
+        'sent_requests_ids': list(sent_requests_ids)
+    })
+
+
+@login_required(login_url='login')
+def profile(request):
+    user = request.user
+
+    if request.method == 'POST':
+        if 'bio' in request.POST:
+            user.bio = request.POST.get('bio')
+            user.save()
+            messages.success(request, "Bio updated.")
+        if request.FILES.get('profile_image'):
+            user.profile_image = request.FILES.get('profile_image')
+            user.save()
+            messages.success(request, "Profile picture updated.")
+
+        text = request.POST.get('text')
+        image = request.FILES.get('image')
+        video = request.FILES.get('video')
+        audio = request.FILES.get('audio')
+        if text or image or video or audio:
+            Post.objects.create(
+                user=user,
+                text=text,
+                image=image,
+                video=video,
+                audio=audio
+            )
+            messages.success(request, "Post shared.")
+        return redirect('profile')
+
+    posts = Post.objects.filter(user=user).order_by('-timestamp')
+    for post in posts:
+        post.pretty_time = format_post_time(post.timestamp)
+
+    # ✅ Count actual number of friends
+    friends_count = MyFriend.objects.filter(user=user).count()
+
+    return render(request, 'profile.html', {
+        'user': user,
+        'posts': posts,
+        'friends_count': friends_count
+    })
+@login_required
+def create_post(request):
+    if request.method == 'POST':
+        text = request.POST.get('text')
+        image = request.FILES.get('image')
+        video = request.FILES.get('video')
+        audio = request.FILES.get('audio')
+
+        Post.objects.create(
+            user=request.user,
+            text=text,
+            image=image,
+            video=video,
+            audio=audio
+        )
+        return redirect('profile')  # redirect to profile afte
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
+
+@login_required
+def update_bio(request):
+    if request.method == 'POST':
+        new_bio = request.POST.get('bio')
+        if new_bio:
+            request.user.bio = new_bio
+            request.user.save()
+    return redirect('profile')

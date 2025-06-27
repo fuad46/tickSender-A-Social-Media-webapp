@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>All People</title>
+    <link rel="stylesheet" href="{% static 'css/friend-request.css' %}">
+</head>
+<body>
+  <div class="container">
+    <h2>Connect to Users</h2>
+
+    {% for person in page_obj %}
+      <div class="request">
+        <div class="request-info">
+          <img src="{% if person.profile_image %}{{ person.profile_image.url }}{% else %}{% static 'default-user.png' %}{% endif %}" alt="Avatar">
+          <span>{{ person.full_name }}</span>
+        </div>
+        <div class="request-actions">
+          {% if person.id not in friends_ids and person.id not in sent_requests_ids %}
+            <form method="POST" action="{% url 'send_request' person.id %}">
+              {% csrf_token %}
+              <button type="submit">Send Request</button>
+            </form>
+          {% elif person.id in sent_requests_ids %}
+            <button disabled>Request Sent</button>
+          {% else %}
+            <button disabled>Already Friend</button>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+      <div style="text-align: center; margin-top: 20px;">
+        <a href="?page={{ page_obj.next_page_number }}">See More</a>
+      </div>
+    {% endif %}
+  </div>
+</body>
+</html>
