@@ -4,6 +4,8 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>TickSender - Home</title>
+  <script src="https://kit.fontawesome.com/59e7337c41.js" crossorigin="anonymous"></script>
+
   <link rel="stylesheet" href="{% static 'css/home.css' %}">
   <link rel="stylesheet" href="{% static 'css/home2.css' %}">
   <style>
@@ -386,7 +388,9 @@
     }
 
     .react-options {
+     
       display: none;
+      
       position: absolute;
       top: 100%;
       left: 0;
@@ -401,8 +405,11 @@
     }
 
     .react-box:hover .react-options {
-      display: block;
+      display: flex;
+      top: -50px;
+      left: -20px;
       animation: fadeInUp 0.3s ease;
+      box-shadow: 0 8px 25px var(--shadow);
     }
 
     .react-options form {
@@ -412,7 +419,7 @@
     .react-options button {
       background: none;
       border: none;
-      padding: 8px 12px;
+      padding: 8px 40px;
       border-radius: 8px;
       cursor: pointer;
       font-size: 14px;
@@ -423,7 +430,9 @@
     }
 
     .react-options button:hover {
-      background: var(--bg-secondary);
+      background: var(--primary-pink);
+      color: #FFF;
+      left: 120px;
     }
 
     .comments {
@@ -626,6 +635,7 @@
     .a_home{
        color: var(--primary-blue) !important;
     }
+   
   </style>
 </head>
 <body>
@@ -633,13 +643,13 @@
     <h1>TickSender</h1>
     <form method="GET" action="{% url 'search_users' %}" class="search-form">
       <input type="text" name="q" placeholder="Search users..." required>
-      <button type="submit">🔍</button>
+      <button type="submit"><i class="fa-solid fa-magnifying-glass icn"></i></button>
     </form>
     <nav>
-      <a class="a_home" href="{% url 'home' %}"> Home</a>
-      <a href="{% url 'profile' %}"> Profile</a>
-      <a href="{% url 'all_people' %}"> Find Friends</a>
-      <a href="{% url 'logout' %}"> Logout</a>
+      <a class="a_home" href="{% url 'home' %}">Home</a>
+      <a href="{% url 'profile' %}">Profile</a>
+      <a href="{% url 'all_people' %}">Find Friends</a>
+      <a href="{% url 'logout' %}">Logout</a>
       <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
         <span id="theme-icon">🌙</span>
       </button>
@@ -665,9 +675,9 @@
 
           <!-- Icon-based upload buttons -->
           <div class="upload-icons">
-            <label for="imageInput" class="icon-upload">📷 Photo</label>
-            <label for="videoInput" class="icon-upload">🎥 Video</label>
-            <label for="audioInput" class="icon-upload">🎙️ Audio</label>
+            <label for="imageInput" class="icon-upload"><i class="fa-solid fa-camera"></i> Photo</label>
+            <label for="videoInput" class="icon-upload"><i class="fa-solid fa-video"></i> Video</label>
+            <label for="audioInput" class="icon-upload"><i class="fa-solid fa-microphone"></i> Audio</label>
           </div>
         </div>
         <button type="submit" class="post-btn">Share Post</button>
@@ -684,10 +694,9 @@
               <strong>{{ post.user.full_name }}</strong>
               <div class="timestamp">{{ post.pretty_time }}</div>
             </div>
-            <form method="POST" action="{% url 'delete_post' post.id %}" class="delete-form">
-              {% csrf_token %}
-              <button type="submit" class="delete-btn">⋯</button>
-            </form>
+          
+            
+           
           </div>
           
           {% if post.text %}<p class="post-text">{{ post.text }}</p>{% endif %}
@@ -698,17 +707,17 @@
           <!-- Reactions Section -->
           <div class="reactions">
             <div class="react-box">
-              <button class="react-btn">😊 React</button>
+              <button class="react-btn"><i class="fa-solid fa-heart icn"></i> React</button>
               <div class="react-options">
                 <form method="POST" action="{% url 'react' post.id %}">
                   {% csrf_token %}
                   <input type="hidden" name="value" value="like">
-                  <button type="submit">👍 Like</button>
+                  <button type="submit"><i class="fa-solid fa-thumbs-up icn"></i></button>
                 </form>
                 <form method="POST" action="{% url 'react' post.id %}">
                   {% csrf_token %}
                   <input type="hidden" name="value" value="dislike">
-                  <button type="submit">👎 Dislike</button>
+                  <button type="submit"><i class="fa-solid fa-thumbs-down icn"></i></button>
                 </form>
               </div>
             </div>
@@ -716,14 +725,14 @@
 
           <!-- Like/Dislike Count -->
           <p>
-            👍 {{ post.like_count }} Likes &nbsp;&nbsp;
-            👎 {{ post.dislike_count }} Dislikes &nbsp;&nbsp;
-            💬 {{ post.comments.count }} Comments
+            <i class="fa-solid fa-thumbs-up icn"></i> {{ post.like_count }} Likes &nbsp;&nbsp;
+            <i class="fa-solid fa-thumbs-down icn"></i> {{ post.dislike_count }} Dislikes &nbsp;&nbsp;
+            <i class="fa-solid fa-rectangle-list icn"></i> {{ post.comments.count }} Comments
           </p>
 
           <!-- Comments Section -->
           <div class="comments">
-            <button onclick="toggleComments('{{post.id}}')">💬 Add Comment</button>
+            <button onclick="toggleComments('{{post.id}}')"><i class="fa-solid fa-rectangle-list icn"></i> Add Comment</button>
 
             <div class="comment-box" id="comment-box-{{ post.id }}" style="display:none;">
               <form method="POST" action="{% url 'add_comment' post.id %}">
@@ -758,13 +767,13 @@
   </div>
 
   <script>
-    // Toggle Comments Function
+  
     function toggleComments(postId) {
       const box = document.getElementById(`comment-box-${postId}`);
       box.style.display = box.style.display === 'none' ? 'block' : 'none';
     }
 
-    // Dark/Light Mode Toggle
+    
     function toggleTheme() {
       const body = document.body;
       const themeIcon = document.getElementById('theme-icon');
@@ -780,7 +789,7 @@
       }
     }
 
-    // Load saved theme on page load
+
     document.addEventListener('DOMContentLoaded', function() {
       const savedTheme = localStorage.getItem('theme');
       const themeIcon = document.getElementById('theme-icon');
@@ -791,7 +800,7 @@
       }
     });
 
-    // Enhanced file upload feedback
+ 
     document.querySelectorAll('input[type="file"]').forEach(input => {
       input.addEventListener('change', function() {
         const label = this.parentNode.querySelector(`label[for="${this.id}"]`);
@@ -803,7 +812,7 @@
       });
     });
 
-    // Add loading state to forms
+ 
     document.querySelectorAll('form').forEach(form => {
       form.addEventListener('submit', function() {
         const submitBtn = this.querySelector('button[type="submit"]');
@@ -814,7 +823,7 @@
       });
     });
 
-    // Smooth scroll animations
+
     const observerOptions = {
       threshold: 0.1,
       rootMargin: '0px 0px -50px 0px'

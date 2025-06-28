@@ -112,15 +112,6 @@ def format_post_time(post_time):
 
 
 
-@login_required(login_url='login')
-def delete_post(request, post_id):
-    post = get_object_or_404(Post, id=post_id, user=request.user)
-    if request.method == "POST":
-        post.delete()
-        messages.success(request, "Post deleted.")
-        return redirect('home')  # or 'profile' if deleting from profile page
-    else:
-        return HttpResponseForbidden("Invalid request")
 
 
 from .models import Post
@@ -166,6 +157,15 @@ def profile(request):
 
     return render(request, 'profile.html', {'user': user, 'posts': posts})
 
+@login_required(login_url='login')
+def delete_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id, user=request.user)
+    if request.method == "POST":
+        post.delete()
+        messages.success(request, "Post deleted.")
+        return redirect('profile')  # or 'profile' if deleting from profile page
+    else:
+        return HttpResponseForbidden("Invalid request")
 
 from django.shortcuts import redirect, get_object_or_404
 from .models import Post, Reaction
@@ -382,3 +382,72 @@ def search_users(request):
         'friends_ids': list(friends_ids),
         'sent_requests_ids': list(sent_requests_ids),
     })
+
+
+# from rest_framework import viewsets, permissions
+# from .models import Message
+# from .serializers import MessageSerializer
+# from rest_framework.response import Response
+# from rest_framework.decorators import action
+
+# class MessageViewSet(viewsets.ModelViewSet):
+#     queryset = Message.objects.all()
+#     serializer_class = MessageSerializer
+#     permission_classes = [permissions.IsAuthenticated]
+
+#     def get_queryset(self):
+#         user = self.request.user
+#         friend_id = self.request.query_params.get('friend_id')
+
+#         if friend_id:
+#             return Message.objects.filter(
+#                 sender__id__in=[user.id, friend_id],
+#                 receiver__id__in=[user.id, friend_id]
+#             ).order_by('timestamp')
+#         return Message.objects.none()
+
+#     def perform_create(self, serializer):
+#         serializer.save(sender=self.request.user)
+
+#     @action(detail=False, methods=['post'], url_path='mark-read')
+#     def mark_as_read(self, request):
+#         friend_id = request.data.get('friend_id')
+#         Message.objects.filter(sender_id=friend_id, receiver=request.user, is_read=False).update(is_read=True)
+#         return Response({'status': 'Messages marked as read'})
+
+# def chat_view(request, friend_id):
+#     messages = Message.objects.filter(
+#         Q(sender=request.user, recipient_id=friend_id) |
+#         Q(sender_id=friend_id, recipient=request.user)
+#     ).order_by('timestamp')
+#     friend = get_object_or_404(UserProfile, id=friend_id)
+#     return render(request, 'chat.html', {'messages': messages, 'friend': friend})
+# def chat_view(request, friend_id):
+#     friend = get_object_or_404(UserProfile, id=friend_id)  
+#     context = {
+#         'request': request, 
+#         'friend': friend,
+#     }
+#     return render(request, 'chat.html', context)
+from django.shortcuts import render, redirect
+from .models import Message, UserProfile
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def chat_view(request, friend_id):
+    friend = UserProfile.objects.get(id=friend_id)
+    messages = Message.objects.filter(
+        sender__in=[request.user, friend],
+        receiver__in=[request.user, friend]
+    ).order_by('timestamp')
+
+    # Mark all unread messages as read
+    Message.objects.filter(sender=friend, receiver=request.user, is_read=False).update(is_read=True)
+
+    if request.method == 'POST':
+        content = request.POST.get('content')
+        if content:
+            Message.objects.create(sender=request.user, receiver=friend, content=content)
+            return redirect('chat', friend_id=friend.id)
+
+    return render(request, 'chat.html', {'messages': messages, 'friend': friend})

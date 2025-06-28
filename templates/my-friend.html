@@ -4,13 +4,27 @@
 <head>
   <title>My Friends</title>
   <link rel="stylesheet" href="{% static 'css/my-friend.css' %}">
+
+    <script src="https://kit.fontawesome.com/59e7337c41.js" crossorigin="anonymous"></script>
 </head>
+
+<style>
+  .chat{
+    text-decoration: none;
+    display: flex;
+    margin-right: 20px;
+    color: #a915ce;
+  }
+  .chat:hover{
+    color: #cec215;
+  }
+</style>
 <body>
   <header class="top-bar">
     <h1>TickSender</h1>
     <form method="GET" action="{% url 'search_users' %}" class="search-form">
       <input type="text" name="q" placeholder="Search users..." required>
-      <button type="submit">🔍</button>
+      <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
     </form>
     <nav>
       <a href="{% url 'home' %}">Home</a>
@@ -28,6 +42,9 @@
         <div class="request-info">
           <img src="{% if friend.profile_image %}{{ friend.profile_image.url }}{% else %}{% static 'default-user.png' %}{% endif %}" alt="Avatar">
           <span>{{ friend.full_name }}</span>
+          <div>
+            <a class="chat" href="{% url 'chat' friend.id %}">Chat</a>
+          </div>
         </div>
       </div>
     {% empty %}

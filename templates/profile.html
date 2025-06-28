@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile - TickSender</title>
+
+      <script src="https://kit.fontawesome.com/59e7337c41.js" crossorigin="anonymous"></script>
     <style>
         * {
             margin: 0;
@@ -611,6 +613,22 @@
     outline: none;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
 }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 20px;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+
+    .delete-btn:hover {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+    }
     </style>
 </head>
 <body>
@@ -640,7 +658,7 @@
                 <div class="profile-avatar">
                     <img src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}{% static 'default-user.png' %}{% endif %}" alt="Profile" class="avatar-img" id="profileImage">
                     <div class="avatar-upload" onclick="document.getElementById('imageInput').click()">
-                        📷
+                        <i class="fa-solid fa-user"></i>
                     </div>
                     <form id="imageForm" method="POST" enctype="multipart/form-data" style="display:none">
                         {% csrf_token %}
@@ -682,19 +700,20 @@
                     <div class="create-post-header">
                         <img src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}{% static 'default-user.png' %}{% endif %}" alt="Your avatar" class="create-post-avatar">
                         <textarea class="post-input" name="text" placeholder="What's on your mind, {{ user.full_name }}?" id="postText" rows="1" oninput="autoResize(this)"></textarea>
+                   
                     </div>
                     <div class="post-actions">
                         <div class="media-options">
                             <label class="media-btn" for="postImage">
-                                🖼️ Photo
+                               <i class="fa-solid fa-camera"></i> Photo
                                 <input type="file" name="image" id="postImage" class="file-input" accept="image/*">
                             </label>
                             <label class="media-btn" for="postVideo">
-                                🎥 Video
+                                <i class="fa-solid fa-video"></i> Video
                                 <input type="file" name="video" id="postVideo" class="file-input" accept="video/*">
                             </label>
                             <label class="media-btn" for="postAudio">
-                                🎵 Audio
+                                <i class="fa-solid fa-microphone"></i> Audio
                                 <input type="file" name="audio" id="postAudio" class="file-input" accept="audio/*">
                             </label>
                         </div>
@@ -714,6 +733,10 @@
                             <div class="post-username">{{ user.full_name }}</div>
                             <div class="post-timestamp">{{ post.timestamp|timesince }} ago</div>
                         </div>
+                             <form method="POST" action="{% url 'delete_post' post.id %}" class="delete-form ">
+              {% csrf_token %}
+              <button type="submit" class="delete-btn"><i class="fa-solid fa-rectangle-xmark icnf"></i></button>
+            </form>
                     </div>
                     <div class="post-content">
                         <div class="post-text">{{ post.text }}</div>
