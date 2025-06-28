@@ -342,86 +342,57 @@
         </div>
 
         <h2 class="search-title">
-            Search Results for "<span class="search-query">John Doe</span>"
+            Search Results for "<span class="search-query">{{query}}</span>"
         </h2>
         
         <div class="results-count">
-            Found 5 users
+            Found related users
         </div>
 
-        <ul class="user-list">
-            <!-- Sample user cards -->
+ {% if query %}      
+{% for user in results %}
             <li class="user-card">
-                <img src="https://images.unsplash.com/photo-1494790108755-2616b612b5bc?w=100&h=100&fit=crop&crop=face" class="avatar" alt="Profile">
+                {% if user.profile_image %}
+  <img src="{{ user.profile_image.url }}" class="avatar">
+{% else %}
+  <img src="{% static 'default-user.png' %}" class="avatar">
+{% endif %}
                 <div class="user-info">
-                    <div class="user-name">Sarah Johnson</div>
-                    <div class="user-phone">+1 (555) 123-4567</div>
+                    <div class="user-name">{{user.full_name}}</div>
+                    <div class="user-phone">{{user.phone}}</div>
                 </div>
+                
+
                 <div class="action-area">
-                    <form>
-                        <button type="submit" class="btn">Send Request</button>
-                    </form>
-                </div>
+       {% if user.id not in friends_ids and user.id not in sent_requests_ids %}
+  <form method="POST" action="{% url 'send_request' user.id %}">
+    {% csrf_token %}
+    <button type="submit" class="btn">Send Request</button>
+  </form>
+{% elif user.id in sent_requests_ids %}
+  <button disabled class="btn disabled friend">Request Sent</button>
+{% else %}
+  <button disabled class="btn disabled friend">Already Friend</button>
+{% endif %}
+
+        </div>
+      </div>
             </li>
 
-            <li class="user-card">
-                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face" class="avatar" alt="Profile">
-                <div class="user-info">
-                    <div class="user-name">Michael Chen</div>
-                    <div class="user-phone">+1 (555) 987-6543</div>
-                </div>
-                <div class="action-area">
-                    <span class="btn disabled friend">Already Friend</span>
-                </div>
-            </li>
-
-            <li class="user-card">
-                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face" class="avatar" alt="Profile">
-                <div class="user-info">
-                    <div class="user-name">Emily Rodriguez</div>
-                    <div class="user-phone">+1 (555) 456-7890</div>
-                </div>
-                <div class="action-area">
-                    <span class="btn disabled sent">Request Sent</span>
-                </div>
-            </li>
-
-            <li class="user-card">
-                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face" class="avatar" alt="Profile">
-                <div class="user-info">
-                    <div class="user-name">David Thompson</div>
-                    <div class="user-phone">+1 (555) 234-5678</div>
-                </div>
-                <div class="action-area">
-                    <form>
-                        <button type="submit" class="btn">Send Request</button>
-                    </form>
-                </div>
-            </li>
-
-            <li class="user-card">
-                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop&crop=face" class="avatar" alt="Profile">
-                <div class="user-info">
-                    <div class="user-name">Jessica Williams</div>
-                    <div class="user-phone">+1 (555) 345-6789</div>
-                </div>
-                <div class="action-area">
-                    <form>
-                        <button type="submit" class="btn">Send Request</button>
-                    </form>
-                </div>
-            </li>
+             
+    
+       
+    {% endfor %}
 
             <!-- No results state (hidden by default) -->
-            <!-- 
-            <li class="no-results" style="display: none;">
-                <div class="no-results-icon">🔍</div>
-                <div class="no-results-text">No users found</div>
-                <div class="no-results-subtext">Try searching with different keywords</div>
-            </li>
-            -->
-        </ul>
+                </ul>
     </div>
+    {% else %}        
+     <div>
+        No Results found
+     </div>  
+     {% endif %}    
+     
 
     <script>
         // Theme toggle functionality

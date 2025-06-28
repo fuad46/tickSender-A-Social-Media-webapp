@@ -5,6 +5,27 @@
     <title>All People</title>
     <link rel="stylesheet" href="{% static 'css/friend-request.css' %}">
 </head>
+<style>
+  .btn{
+border-radius: 24px !important;
+    height: 40px;
+    width: 100%;
+    background:  linear-gradient(135deg, #e91e63, #2196f3);
+  }
+  .img-u{
+    border: 2px solid #e91e63;
+  }
+  .req_sent{
+    background: #2196f3 !important;
+    border-radius: 24px !important;
+  }
+  .friend_ok{
+    border: 2px solid #e91e63 !important;
+    background: none !important;
+    color: #e91e63 !important;
+    border-radius: 24px !important;
+  }
+</style>
 <body>
   <div class="container">
     <h2>Connect to Users</h2>
@@ -12,19 +33,19 @@
     {% for person in page_obj %}
       <div class="request">
         <div class="request-info">
-          <img src="{% if person.profile_image %}{{ person.profile_image.url }}{% else %}{% static 'default-user.png' %}{% endif %}" alt="Avatar">
+          <img src="{% if person.profile_image %}{{ person.profile_image.url }}{% else %}{% static 'default-user.png' %}{% endif %}" class="img-u" alt="Avatar">
           <span>{{ person.full_name }}</span>
         </div>
         <div class="request-actions">
           {% if person.id not in friends_ids and person.id not in sent_requests_ids %}
             <form method="POST" action="{% url 'send_request' person.id %}">
               {% csrf_token %}
-              <button type="submit">Send Request</button>
+              <button type="submit" class="btn">Send Request</button>
             </form>
           {% elif person.id in sent_requests_ids %}
-            <button disabled>Request Sent</button>
+            <button disabled class="btn req_sent">Request Sent</button>
           {% else %}
-            <button disabled>Already Friend</button>
+            <button disabled class="btn friend_ok">Already Friend</button>
           {% endif %}
         </div>
       </div>

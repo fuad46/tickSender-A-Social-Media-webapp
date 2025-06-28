@@ -614,6 +614,18 @@
     ::-webkit-scrollbar-thumb:hover {
       background: var(--primary-blue);
     }
+    nav a:hover{
+      text-decoration: none !important;
+      color: var(--primary-blue) !important;
+      background: var(--bg-secondary) !important;
+ 
+    }
+    nav a{
+      color: var(--text-primary) !important;
+    }
+    .a_home{
+       color: var(--primary-blue) !important;
+    }
   </style>
 </head>
 <body>
@@ -624,10 +636,10 @@
       <button type="submit">🔍</button>
     </form>
     <nav>
-      <a href="{% url 'home' %}">🏠 Home</a>
-      <a href="{% url 'profile' %}">👤 Profile</a>
-      <a href="{% url 'all_people' %}">👤👤 Find Friends</a>
-      <a href="{% url 'logout' %}">🚪 Logout</a>
+      <a class="a_home" href="{% url 'home' %}"> Home</a>
+      <a href="{% url 'profile' %}"> Profile</a>
+      <a href="{% url 'all_people' %}"> Find Friends</a>
+      <a href="{% url 'logout' %}"> Logout</a>
       <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
         <span id="theme-icon">🌙</span>
       </button>
@@ -727,7 +739,7 @@
             {% for comment in post.comments.all %}
               <div class="comment">
                 <strong>{{ comment.user.full_name }}</strong>: {{ comment.text }}
-                <small>({{ comment.created_at|timesince }} ago)</small>
+                <!-- <small>({{ comment.created_at|timesince }} ago)</small> -->
               </div>
             {% empty %}
               <div class="comment" style="text-align: center; color: var(--text-secondary);">

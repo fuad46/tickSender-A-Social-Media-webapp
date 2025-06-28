@@ -211,25 +211,25 @@ def add_comment(request, post_id):
 
 #     return render(request, 'searched.html', {'results': results, 'query': query})
 
-@login_required
-def search_users(request):
-    query = request.GET.get('q')
-    results = []
-    if query:
-        results = UserProfile.objects.filter(
-            Q(full_name__icontains=query) | Q(phone__icontains=query)
-        ).exclude(id=request.user.id)
+# @login_required
+# def search_users(request):
+#     query = request.GET.get('q')
+#     results = []
+#     if query:
+#         results = UserProfile.objects.filter(
+#             Q(full_name__icontains=query) | Q(phone__icontains=query)
+#         ).exclude(id=request.user.id)
 
-    # Get sent request and friend IDs to control button visibility
-    sent_requests_ids = FriendRequest.objects.filter(from_user=request.user).values_list('to_user_id', flat=True)
-    friends_ids = MyFriend.objects.filter(user=request.user).values_list('friend_id', flat=True)
+   
+#     sent_requests_ids = FriendRequest.objects.filter(from_user=request.user).values_list('to_user_id', flat=True)
+#     friends_ids = MyFriend.objects.filter(user=request.user).values_list('friend_id', flat=True)
 
-    return render(request, 'searched.html', {
-        'results': results,
-        'query': query,
-        'sent_requests_ids': list(sent_requests_ids),
-        'friends_ids': list(friends_ids)
-    })
+#     return render(request, 'searched.html', {
+#         'results': results,
+#         'query': query,
+#         'sent_requests_ids': list(sent_requests_ids),
+#         'friends_ids': list(friends_ids)
+#     })
 
 
 
@@ -238,7 +238,7 @@ def send_friend_request(request, user_id):
     to_user = get_object_or_404(UserProfile, id=user_id)
     if request.user != to_user:
         FriendRequest.objects.get_or_create(from_user=request.user, to_user=to_user)
-    return redirect('home')
+    return redirect('all_people')
 
 @login_required
 def view_friend_requests(request):
@@ -365,3 +365,20 @@ def update_bio(request):
             request.user.bio = new_bio
             request.user.save()
     return redirect('profile')
+from .models import MyFriend, FriendRequest
+
+@login_required
+def search_users(request):
+    query = request.GET.get('q', '')
+    results = UserProfile.objects.filter(full_name__icontains=query).exclude(id=request.user.id)
+
+    # Get IDs of sent requests and friends
+    sent_requests_ids = FriendRequest.objects.filter(from_user=request.user).values_list('to_user_id', flat=True)
+    friends_ids = MyFriend.objects.filter(user=request.user).values_list('friend_id', flat=True)
+
+    return render(request, 'searched.html', {
+        'query': query,
+        'results': results,
+        'friends_ids': list(friends_ids),
+        'sent_requests_ids': list(sent_requests_ids),
+    })

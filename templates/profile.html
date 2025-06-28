@@ -560,6 +560,57 @@
         .btn-secondary:hover {
             background: var(--border-color);
         }
+
+        .bio-section form {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 500px;
+}
+
+.bio-section textarea {
+    resize: vertical;
+    min-height: 80px;
+    max-height: 200px;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    background-color:   var(--bg-card);
+    transition: border-color 0.2s ease;
+     color: var(--text-secondary);
+}
+
+.bio-section textarea:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}
+
+.bio-section button {
+    align-self: flex-start;
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    width: 100%;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.bio-section button:hover {
+    background-color: #0056b3;
+}
+
+.bio-section button:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
+}
     </style>
 </head>
 <body>
@@ -587,7 +638,7 @@
         <div class="profile-section">
             <div class="profile-header">
                 <div class="profile-avatar">
-                    <img src="{{ user.profile_image.url }}" alt="Profile" class="avatar-img" id="profileImage">
+                    <img src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}{% static 'default-user.png' %}{% endif %}" alt="Profile" class="avatar-img" id="profileImage">
                     <div class="avatar-upload" onclick="document.getElementById('imageInput').click()">
                         📷
                     </div>
@@ -629,7 +680,7 @@
                 <form id="postForm" method="POST" action="{% url 'create_post' %}" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="create-post-header">
-                        <img src="{{ user.profile_image.url }}" alt="Your avatar" class="create-post-avatar">
+                        <img src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}{% static 'default-user.png' %}{% endif %}" alt="Your avatar" class="create-post-avatar">
                         <textarea class="post-input" name="text" placeholder="What's on your mind, {{ user.full_name }}?" id="postText" rows="1" oninput="autoResize(this)"></textarea>
                     </div>
                     <div class="post-actions">
@@ -658,7 +709,7 @@
                 {% for post in posts %}
                 <div class="post">
                     <div class="post-header">
-                        <img src="{{ user.profile_image.url }}" alt="Profile" class="post-avatar">
+                        <img src="{% if request.user.profile_image %}{{ request.user.profile_image.url }}{% else %}{% static 'default-user.png' %}{% endif %}" alt="Profile" class="post-avatar">
                         <div class="post-user-info">
                             <div class="post-username">{{ user.full_name }}</div>
                             <div class="post-timestamp">{{ post.timestamp|timesince }} ago</div>
