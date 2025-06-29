@@ -331,7 +331,11 @@ def profile(request):
 
     # ✅ Count actual number of friends
     friends_count = MyFriend.objects.filter(user=user).count()
-
+    for post in posts:
+        post.pretty_time = format_post_time(post.timestamp)
+        post.like_count = post.reactions.filter(value='like').count()     # ✅ Here
+        post.dislike_count = post.reactions.filter(value='dislike').count()
+        post.user_reaction = post.reactions.filter(user=request.user).first()
     return render(request, 'profile.html', {
         'user': user,
         'posts': posts,
