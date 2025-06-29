@@ -9,15 +9,67 @@
 </head>
 
 <style>
+   :root {
+      /* Light mode colors */
+      --primary-pink: #e91e63;
+      --primary-blue: #2196f3;
+      --gradient-primary: linear-gradient(135deg, #e91e63, #2196f3);
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --bg-card: #ffffff;
+      --text-primary: #1c1e21;
+      --text-secondary: #65676b;
+      --border-color: #e4e6ea;
+      --shadow: rgba(0, 0, 0, 0.1);
+      --overlay: rgba(255, 255, 255, 0.95);
+    }
+
+    [data-theme="dark"] {
+      /* Dark mode colors */
+      --bg-primary: #18191a;
+      --bg-secondary: #242526;
+      --bg-card: #242526;
+      --text-primary: #e4e6ea;
+      --text-secondary: #b0b3b8;
+      --border-color: #3e4042;
+      --shadow: rgba(0, 0, 0, 0.3);
+      --overlay: rgba(36, 37, 38, 0.95);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
   .chat{
     text-decoration: none;
     display: flex;
     margin-right: 20px;
-    color: #a915ce;
+    color: var(--primary-blue);
   }
   .chat:hover{
     color: #cec215;
   }
+  body{
+    background: var(--bg-secondary);
+  }
+ .request{
+  background: var(--overlay);
+  color: #FFF;
+ }
+ .container{
+  color: var(--primary-pink);
+ }
+  .container:hover{
+  background: #2f3a4463;
+  cursor: pointer;
+ }
+ .fa-moon{
+  color: var(--primary-pink);
+ }
+.fa-magnifying-glass{
+  color: var(--text-primary);
+}
 </style>
 <body>
   <header class="top-bar">
@@ -31,7 +83,9 @@
       <a href="{% url 'profile' %}">Profile</a>
       <a href="{% url 'logout' %}">Logout</a>
       <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
-        <span id="theme-icon">🌙</span>
+        <span id="theme-icon">
+          <i class="fa-solid fa-moon"></i>
+        </span>
       </button>
     </nav>
   </header>
@@ -41,9 +95,9 @@
       <div class="request">
         <div class="request-info">
           <img src="{% if friend.profile_image %}{{ friend.profile_image.url }}{% else %}{% static 'default-user.png' %}{% endif %}" alt="Avatar">
-          <span>{{ friend.full_name }}</span>
-          <div>
-            <a class="chat" href="{% url 'chat' friend.id %}">Chat</a>
+          <span style="color: var(--text-secondary);">{{ friend.full_name }}</span>
+          <div style="display: flex; align-items: center; justify-content: center; margin-right: 8px;">
+            <a class="chat" style="color: var(--primary-pink);" href="{% url 'chat' friend.id %}"><i class="fa-solid fa-comment " style="display: flex; align-items: center; justify-content: center; margin-right: 4px;"></i> Chat</a>
           </div>
         </div>
       </div>
@@ -51,31 +105,84 @@
       <p style="text-align:center;">You have no friends yet. Start connecting!</p>
     {% endfor %}
   </div>
-  <script>
+ 
+   <script>
+  
+    function toggleComments(postId) {
+      const box = document.getElementById(`comment-box-${postId}`);
+      box.style.display = box.style.display === 'none' ? 'block' : 'none';
+    }
+
+    
     function toggleTheme() {
       const body = document.body;
       const themeIcon = document.getElementById('theme-icon');
       
       if (body.getAttribute('data-theme') === 'dark') {
         body.removeAttribute('data-theme');
-        themeIcon.textContent = '🌙';
+        themeIcon.Content = 'fa-solid fa-moon';
         localStorage.setItem('theme', 'light');
       } else {
         body.setAttribute('data-theme', 'dark');
-        themeIcon.textContent = '☀️';
+        themeIcon.Content = 'fa-solid fa-sun';
         localStorage.setItem('theme', 'dark');
       }
     }
 
-    // Load saved theme on page load
+
     document.addEventListener('DOMContentLoaded', function() {
       const savedTheme = localStorage.getItem('theme');
       const themeIcon = document.getElementById('theme-icon');
       
       if (savedTheme === 'dark') {
         document.body.setAttribute('data-theme', 'dark');
-        themeIcon.textContent = '☀️';
+        themeIcon.Content = 'fa-solid fa-sun';
       }
+    });
+
+ 
+    document.querySelectorAll('input[type="file"]').forEach(input => {
+      input.addEventListener('change', function() {
+        const label = this.parentNode.querySelector(`label[for="${this.id}"]`);
+        if (this.files.length > 0) {
+          label.style.background = 'var(--primary-blue)';
+          label.style.color = 'white';
+          label.innerHTML = label.innerHTML.split(' ')[0] + ' ✓ Selected';
+        }
+      });
+    });
+
+ 
+    document.querySelectorAll('form').forEach(form => {
+      form.addEventListener('submit', function() {
+        const submitBtn = this.querySelector('button[type="submit"]');
+        if (submitBtn) {
+          submitBtn.innerHTML = '<span class="loading"></span> Posting...';
+          submitBtn.disabled = true;
+        }
+      });
+    });
+
+
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.post').forEach(post => {
+      post.style.opacity = '0';
+      post.style.transform = 'translateY(20px)';
+      post.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      observer.observe(post);
     });
   </script>
 </body>

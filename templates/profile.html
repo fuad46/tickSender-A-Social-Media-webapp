@@ -629,6 +629,209 @@
       background: var(--bg-primary);
       color: var(--text-primary);
     }
+        .reactions {
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .react-box {
+      position: relative;
+      display: inline-block;
+    }
+
+    .react-btn {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+    }
+
+    .react-btn:hover {
+      background: var(--primary-pink);
+      color: white;
+      transform: scale(1.05);
+    }
+
+    .react-options {
+     
+      display: none;
+      
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: var(--overlay);
+      backdrop-filter: blur(10px);
+      padding: 8px;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px var(--shadow);
+      border: 1px solid var(--border-color);
+      z-index: 100;
+      margin-top: 4px;
+    }
+
+    .react-box:hover .react-options {
+      display: flex;
+      top: -50px;
+      left: -20px;
+      animation: fadeInUp 0.3s ease;
+      box-shadow: 0 8px 25px var(--shadow);
+    }
+
+    .react-options form {
+      margin: 0;
+    }
+
+    .react-options button {
+      background: none;
+      border: none;
+      padding: 8px 40px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--text-primary);
+      transition: background 0.3s ease;
+      width: 100%;
+      text-align: left;
+    }
+
+    .react-options button:hover {
+      background: var(--primary-pink);
+      color: #FFF;
+      left: 120px;
+    }
+
+    .comments {
+      padding: 12px 20px;
+    }
+
+    .comments > button {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 14px;
+      cursor: pointer;
+      padding: 8px 16px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .comments > button:hover {
+      background: var(--bg-secondary);
+      color: var(--primary-blue);
+    }
+
+    .comment-box {
+      margin-top: 12px;
+      padding: 16px;
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      animation: slideDown 0.3s ease;
+    }
+
+    .comment-box form {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .comment-box input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    .comment-box input:focus {
+      border-color: var(--primary-blue);
+    }
+
+    .comment-box button {
+      background: var(--primary-blue);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .comment-box button:hover {
+      background: var(--primary-pink);
+      transform: scale(1.05);
+    }
+
+    .comment-list {
+      padding: 0 20px 16px;
+    }
+
+    .comment {
+      padding: 8px 0;
+      font-size: 14px;
+      color: var(--text-primary);
+      border-left: 3px solid var(--primary-blue);
+      padding-left: 12px;
+      margin-bottom: 8px;
+      background: var(--bg-secondary);
+      border-radius: 0 8px 8px 0;
+      padding: 8px 12px;
+    }
+
+    .comment strong {
+      color: var(--primary-blue);
+    }
+
+    .comment small {
+      color: var(--text-secondary);
+    }
+
+    /* Like/Dislike counts */
+    .post p {
+      padding: 12px 20px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      border-top: 1px solid var(--border-color);
+      margin: 0;
+      background: var(--bg-secondary);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        max-height: 0;
+      }
+      to {
+        opacity: 1;
+        max-height: 300px;
+      }
+    }
+ .icn_r{
+    color: #e91e63;
+   }
+   .fa-sun{
+    color: #e91e63 ;
+   }
     </style>
 </head>
 <body>
@@ -643,8 +846,10 @@
                 <a href="{% url 'my_friends' %}">My Friends</a>
                 <a href="{% url 'friend_requests' %}">Friend Requests</a>
                 <a href="{% url 'logout' %}">Logout</a>
-                <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">
-                    🌙
+                <button class="theme-toggle " onclick="toggleTheme()" id="themeToggle">
+               
+                    <!-- <i class="fa-solid fa-sun " style="color: var(--accent-pink);"></i> -->
+                    <i class="fa-solid fa-moon " style="color: var(--accent-pink);"></i>
                 </button>
             </div>
         </div>
@@ -744,6 +949,58 @@
                         {% if post.video %}<video class="post-media" controls><source src="{{ post.video.url }}"></video>{% endif %}
                         {% if post.audio %}<audio class="post-media" controls><source src="{{ post.audio.url }}"></audio>{% endif %}
                     </div>
+                         <!-- Reactions Section -->
+          <div class="reactions">
+            <div class="react-box">
+              <button class="react-btn icn_r"><i class="fa-solid fa-heart icn "></i> React</button>
+              <div class="react-options">
+                <form method="POST" action="{% url 'react' post.id %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="value" value="like">
+                  <button type="submit"><i class="fa-solid fa-thumbs-up icn"></i></button>
+                </form>
+                <form method="POST" action="{% url 'react' post.id %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="value" value="dislike">
+                  <button type="submit"><i class="fa-solid fa-thumbs-down icn"></i></button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- Like/Dislike Count -->
+          <p>
+            <i class="fa-solid fa-thumbs-up icn"></i> {{ post.like_count }} Likes &nbsp;&nbsp;
+            <i class="fa-solid fa-thumbs-down icn"></i> {{ post.dislike_count }} Dislikes &nbsp;&nbsp;
+            <i class="fa-solid fa-rectangle-list icn"></i> {{ post.comments.count }} Comments
+          </p>
+
+          <!-- Comments Section -->
+          <div class="comments">
+            <button onclick="toggleComments('{{post.id}}')"><i class="fa-solid fa-rectangle-list icn"></i> Add Comment</button>
+
+            <div class="comment-box" id="comment-box-{{ post.id }}" style="display:none;">
+              <form method="POST" action="{% url 'add_comment' post.id %}">
+                {% csrf_token %}
+                <input type="text" name="text" placeholder="Write a comment..." required>
+                <button type="submit">Post</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Comments List -->
+          <div class="comment-list">
+            {% for comment in post.comments.all %}
+              <div class="comment">
+                <strong>{{ comment.user.full_name }}</strong>: {{ comment.text }}
+                <!-- <small>({{ comment.created_at|timesince }} ago)</small> -->
+              </div>
+            {% empty %}
+              <div class="comment" style="text-align: center; color: var(--text-secondary);">
+                No comments yet. Be the first to comment!
+              </div>
+            {% endfor %}
+          </div>
                 </div>
                 {% endfor %}
             </div>
@@ -758,11 +1015,12 @@
             
             if (body.getAttribute('data-theme') === 'dark') {
                 body.removeAttribute('data-theme');
-                themeToggle.textContent = '🌙';
+                themeToggle.add = 'fa-solid fa-moon';
+            
                 localStorage.setItem('theme', 'light');
             } else {
                 body.setAttribute('data-theme', 'dark');
-                themeToggle.textContent = '☀️';
+                themeToggle.Content = 'fa-solid fa-sun';
                 localStorage.setItem('theme', 'dark');
             }
         }
@@ -774,9 +1032,10 @@
             
             if (savedTheme === 'dark') {
                 document.body.setAttribute('data-theme', 'dark');
-                themeToggle.textContent = '☀️';
+                themeToggle.add = 'fa-solid fa-sun';
+              
             } else {
-                themeToggle.textContent = '🌙';
+                themeToggle.add = 'fa-solid fa-moon';
             }
         }
 

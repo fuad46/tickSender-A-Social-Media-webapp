@@ -629,13 +629,18 @@
       background: var(--bg-secondary) !important;
  
     }
+    .fa-moon{
+    color: #e91e63 ;
+   }
     nav a{
       color: var(--text-primary) !important;
     }
     .a_home{
        color: var(--primary-blue) !important;
     }
-   
+   .icn_r{
+    color: #e91e63;
+   }
   </style>
 </head>
 <body>
@@ -650,8 +655,10 @@
       <a href="{% url 'profile' %}">Profile</a>
       <a href="{% url 'all_people' %}">Find Friends</a>
       <a href="{% url 'logout' %}">Logout</a>
-      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
-        <span id="theme-icon">🌙</span>
+      <button class="theme-toggle fa-moon" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+        <span id="theme-icon">
+          <i class="fa-solid fa-moon " ></i>
+        </span>
       </button>
     </nav>
   </header>
@@ -707,7 +714,7 @@
           <!-- Reactions Section -->
           <div class="reactions">
             <div class="react-box">
-              <button class="react-btn"><i class="fa-solid fa-heart icn"></i> React</button>
+              <button class="react-btn icn_r"><i class="fa-solid fa-heart icn "></i> React</button>
               <div class="react-options">
                 <form method="POST" action="{% url 'react' post.id %}">
                   {% csrf_token %}
@@ -780,11 +787,11 @@
       
       if (body.getAttribute('data-theme') === 'dark') {
         body.removeAttribute('data-theme');
-        themeIcon.textContent = '🌙';
+        themeIcon.Content = 'fa-solid fa-moon';
         localStorage.setItem('theme', 'light');
       } else {
         body.setAttribute('data-theme', 'dark');
-        themeIcon.textContent = '☀️';
+        themeIcon.Content = 'fa-solid fa-sun';
         localStorage.setItem('theme', 'dark');
       }
     }
@@ -796,7 +803,7 @@
       
       if (savedTheme === 'dark') {
         document.body.setAttribute('data-theme', 'dark');
-        themeIcon.textContent = '☀️';
+        themeIcon.Content = 'fa-solid fa-sun';
       }
     });
 
